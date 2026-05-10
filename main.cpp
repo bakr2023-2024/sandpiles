@@ -1,8 +1,18 @@
 #include <raylib.h>
 #include <cstring>
-int main()
+#include <string>
+int main(int argc, char **argv)
 {
-    int sw = 300, sh = 300;
+    int hex0 = 0x000000, hex1 = 0xff0000, hex2 = 0x00ff00, hex3 = 0x0000ff;
+    if (argc == 5)
+        hex3 = std::stoi(argv[4], nullptr, 16);
+    if (argc >= 4)
+        hex2 = std::stoi(argv[3], nullptr, 16);
+    if (argc >= 3)
+        hex1 = std::stoi(argv[2], nullptr, 16);
+    if (argc >= 2)
+        hex0 = std::stoi(argv[1], nullptr, 16);
+    int sw = 250, sh = 250;
     InitWindow(sw, sh, "Sandpiles");
     int *grid = new int[sw * sh]();
     grid[(sh / 2) * sw + (sw / 2)] = 1000000;
@@ -19,14 +29,12 @@ int main()
             for (int step = 0; step < 100; step++)
             {
                 std::memset(next, 0, sw * sh * sizeof(int));
-
                 for (int y = 0; y < sh; y++)
                 {
                     for (int x = 0; x < sw; x++)
                     {
                         int idx = y * sw + x;
                         int val = grid[idx];
-
                         if (val >= 4)
                         {
                             next[idx] += (val - 4);
@@ -40,12 +48,9 @@ int main()
                             next[y * sw + right]++;
                         }
                         else
-                        {
                             next[idx] += val;
-                        }
                     }
                 }
-
                 int *temp = grid;
                 grid = next;
                 next = temp;
@@ -55,9 +60,9 @@ int main()
                 for (int x = 0; x < sw; x++)
                 {
                     int idx = y * sw + x;
-                    int rgb = grid[idx] == 3 ? 0xff0000 : grid[idx] == 2 ? 0x00ff00
-                                                      : grid[idx] == 1   ? 0x0000ff
-                                                                         : 0x000000;
+                    int rgb = grid[idx] == 3 ? hex3 : grid[idx] == 2 ? hex2
+                                                  : grid[idx] == 1   ? hex1
+                                                                     : hex0;
                     pixels[idx] = 0xff000000 | rgb;
                 }
             }
