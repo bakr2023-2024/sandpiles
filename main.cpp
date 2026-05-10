@@ -24,15 +24,15 @@ int main()
 
                     if (val >= 4)
                     {
-                        next[idx] += val - 4;
-                        if (y > 0)
-                            next[idx - sw]++;
-                        if (y < sh - 1)
-                            next[idx + sw]++;
-                        if (x > 0)
-                            next[idx - 1]++;
-                        if (x < sw - 1)
-                            next[idx + 1]++;
+                        next[idx] += (val - 4);
+                        int left = (x - 1 + sw) % sw;
+                        int right = (x + 1) % sw;
+                        int up = (y - 1 + sh) % sh;
+                        int down = (y + 1) % sh;
+                        next[up * sw + x]++;
+                        next[down * sw + x]++;
+                        next[y * sw + left]++;
+                        next[y * sw + right]++;
                     }
                     else
                     {
