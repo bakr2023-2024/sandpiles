@@ -1,12 +1,65 @@
 #include <raylib.h>
+#include <cstring>
 int main()
 {
-    int sw = 960, sh = 720;
-    InitWindow(sw, sh, "Program");
+    int sw = 300, sh = 300;
+    InitWindow(sw, sh, "Sandpiles");
+    int *grid = new int[sw * sh]();
+    grid[(sh / 2) * sw + (sw / 2)] = 1000000;
+    int *next = new int[sw * sh]();
+    int *pixels = new int[sw * sh]();
+    Texture2D tex = LoadTextureFromImage(GenImageColor(sw, sh, BLACK));
     while (!WindowShouldClose())
     {
+        for (int step = 0; step < 100; step++)
+        {
+            std::memset(next, 0, sw * sh * sizeof(int));
+
+            for (int y = 0; y < sh; y++)
+            {
+                for (int x = 0; x < sw; x++)
+                {
+                    int idx = y * sw + x;
+                    int val = grid[idx];
+
+                    if (val >= 4)
+                    {
+                        next[idx] += val - 4;
+                        if (y > 0)
+                            next[idx - sw]++;
+                        if (y < sh - 1)
+                            next[idx + sw]++;
+                        if (x > 0)
+                            next[idx - 1]++;
+                        if (x < sw - 1)
+                            next[idx + 1]++;
+                    }
+                    else
+                    {
+                        next[idx] += val;
+                    }
+                }
+            }
+
+            int *temp = grid;
+            grid = next;
+            next = temp;
+        }
+        for (int y = 0; y < sh; y++)
+        {
+            for (int x = 0; x < sw; x++)
+            {
+                int idx = y * sw + x;
+                int rgb = grid[idx] == 3 ? 0xff0000 : grid[idx] == 2 ? 0x00ff00
+                                                  : grid[idx] == 1   ? 0x0000ff
+                                                                     : 0x000000;
+                pixels[idx] = 0xff000000 | rgb;
+            }
+        }
+        UpdateTexture(tex, pixels);
         BeginDrawing();
         ClearBackground(BLACK);
+        DrawTexture(tex, 0, 0, WHITE);
         EndDrawing();
     }
     CloseWindow();
