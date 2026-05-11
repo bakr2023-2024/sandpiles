@@ -27,3 +27,10 @@ all arguments are optional and positional
 |control|action|
 |-------|------|
 |S|pause/continue animation|
+
+### examples
+```bash
+./sandpiles 10000000 100 0x000000 0x00ff00 0xff00ff 0xd4af371   
+```
+
+![preview of simulation](preview.png)
