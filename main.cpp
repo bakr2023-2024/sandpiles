@@ -15,19 +15,21 @@ int main(int argc, char **argv)
     int sw = 250, sh = 250;
     InitWindow(sw, sh, "Sandpiles");
     int *grid = new int[sw * sh]();
-    grid[(sh / 2) * sw + (sw / 2)] = 1000000;
+    grid[(sh / 2) * sw + (sw / 2)] = 10000000;
     int *next = new int[sw * sh]();
     int *pixels = new int[sw * sh]();
     Texture2D tex = LoadTextureFromImage(GenImageColor(sw, sh, BLACK));
     bool isStop = false;
+    bool isStable = false;
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_S))
             isStop = !isStop;
-        if (!isStop)
+        if (!isStop && !isStable)
         {
-            for (int step = 0; step < 100; step++)
+            for (int i = 0; i < 100; i++)
             {
+                isStable = true;
                 std::memset(next, 0, sw * sh * sizeof(int));
                 for (int y = 0; y < sh; y++)
                 {
@@ -37,15 +39,16 @@ int main(int argc, char **argv)
                         int val = grid[idx];
                         if (val >= 4)
                         {
+                            isStable = false;
                             next[idx] += (val - 4);
-                            int left = (x - 1 + sw) % sw;
-                            int right = (x + 1) % sw;
-                            int up = (y - 1 + sh) % sh;
-                            int down = (y + 1) % sh;
-                            next[up * sw + x]++;
-                            next[down * sw + x]++;
-                            next[y * sw + left]++;
-                            next[y * sw + right]++;
+                            if (x + 1 < sw)
+                                next[idx + 1] += 1;
+                            if (x - 1 >= 0)
+                                next[idx - 1] += 1;
+                            if (y + 1 < sh)
+                                next[idx + sw] += 1;
+                            if (y - 1 >= 0)
+                                next[idx - sw] += 1;
                         }
                         else
                             next[idx] += val;
@@ -54,6 +57,8 @@ int main(int argc, char **argv)
                 int *temp = grid;
                 grid = next;
                 next = temp;
+                if (isStable)
+                    break;
             }
             for (int y = 0; y < sh; y++)
             {
