@@ -12,8 +12,9 @@ int main(int argc, char **argv)
         hex1 = std::stoi(argv[2], nullptr, 16);
     if (argc >= 2)
         hex0 = std::stoi(argv[1], nullptr, 16);
-    int sw = 250, sh = 250;
+    int sw = 300, sh = 300;
     InitWindow(sw, sh, "Sandpiles");
+    SetTraceLogLevel(LOG_NONE);
     int *grid = new int[sw * sh]();
     grid[(sh / 2) * sw + (sw / 2)] = 10000000;
     int *next = new int[sw * sh]();
@@ -42,13 +43,13 @@ int main(int argc, char **argv)
                             isStable = false;
                             next[idx] += (val - 4);
                             if (x + 1 < sw)
-                                next[idx + 1] += 1;
+                                next[idx + 1]++;
                             if (x - 1 >= 0)
-                                next[idx - 1] += 1;
+                                next[idx - 1]++;
                             if (y + 1 < sh)
-                                next[idx + sw] += 1;
+                                next[idx + sw]++;
                             if (y - 1 >= 0)
-                                next[idx - sw] += 1;
+                                next[idx - sw]++;
                         }
                         else
                             next[idx] += val;
