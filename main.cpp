@@ -3,20 +3,24 @@
 #include <string>
 int main(int argc, char **argv)
 {
-    int hex0 = 0x000000, hex1 = 0xff0000, hex2 = 0x00ff00, hex3 = 0x0000ff;
-    if (argc == 5)
-        hex3 = std::stoi(argv[4], nullptr, 16);
+    int initGrains = 1000000, steps = 100, hex0 = 0x000000, hex1 = 0xff0000, hex2 = 0x00ff00, hex3 = 0x0000ff;
+    if (argc == 7)
+        hex3 = std::stoi(argv[6], nullptr, 16);
+    if (argc >= 6)
+        hex2 = std::stoi(argv[5], nullptr, 16);
+    if (argc >= 5)
+        hex1 = std::stoi(argv[4], nullptr, 16);
     if (argc >= 4)
-        hex2 = std::stoi(argv[3], nullptr, 16);
+        hex0 = std::stoi(argv[3], nullptr, 16);
     if (argc >= 3)
-        hex1 = std::stoi(argv[2], nullptr, 16);
+        steps = std::stoi(argv[2]);
     if (argc >= 2)
-        hex0 = std::stoi(argv[1], nullptr, 16);
+        initGrains = std::stoi(argv[1]);
     int sw = 300, sh = 300;
     InitWindow(sw, sh, "Sandpiles");
     SetTraceLogLevel(LOG_NONE);
     int *grid = new int[sw * sh]();
-    grid[(sh / 2) * sw + (sw / 2)] = 10000000;
+    grid[(sh / 2) * sw + (sw / 2)] = initGrains;
     int *next = new int[sw * sh]();
     int *pixels = new int[sw * sh]();
     Texture2D tex = LoadTextureFromImage(GenImageColor(sw, sh, BLACK));
@@ -28,7 +32,7 @@ int main(int argc, char **argv)
             isStop = !isStop;
         if (!isStop && !isStable)
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < steps; i++)
             {
                 isStable = true;
                 std::memset(next, 0, sw * sh * sizeof(int));
